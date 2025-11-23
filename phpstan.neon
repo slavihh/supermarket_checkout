@@ -1,0 +1,20 @@
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-doctrine/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+
+parameters:
+    level: 8
+
+    paths:
+        - src
+
+    tmpDir: var/cache/phpstan
+
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+
+    ignoreErrors:
+        - '#Typed property .+ must not be accessed before initialization#'
+        - '#Access to an undefined property Symfony\\.+#'

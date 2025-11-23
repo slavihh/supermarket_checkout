@@ -23,7 +23,6 @@ class Sale
     #[ORM\Column(type: 'uuid', unique: true)]
     private Uuid $publicId;
 
-    // total price in cents
     #[ORM\Column]
     private int $totalPrice;
 
@@ -56,28 +55,11 @@ class Sale
         return $this->publicId->toRfc4122();
     }
 
-    public function setPublicId(Uuid $uuid): self
-    {
-        $this->publicId = $uuid;
-
-        return $this;
-    }
-
-    public function getTotalPrice(): int
-    {
-        return $this->totalPrice;
-    }
-
     public function setTotalPrice(int $totalPrice): self
     {
         $this->totalPrice = $totalPrice;
 
         return $this;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
     }
 
     /**
@@ -98,14 +80,8 @@ class Sale
         return $this;
     }
 
-    public function removeItem(SaleItem $item): self
+    public function getTotalPrice(): int
     {
-        if ($this->items->removeElement($item)) {
-            if ($item->getSale() === $this) {
-                $item->setSale(null);
-            }
-        }
-
-        return $this;
+        return $this->totalPrice;
     }
 }

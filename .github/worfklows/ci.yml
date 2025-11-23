@@ -1,0 +1,64 @@
+name: CI
+
+on:
+    push:
+        branches: [ "master" ]
+    pull_request:
+        branches: [ "master" ]
+
+jobs:
+    checks:
+        runs-on: ubuntu-latest
+
+        services:
+            mysql:
+                image: mysql:8.4
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: test_db
+                    MYSQL_USER: app
+                    MYSQL_PASSWORD: app_password
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uapp -papp_password"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            DATABASE_URL: mysql://app:app_password@127.0.0.1:3306/test_db?serverVersion=8.4&charset=utf8mb4
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+                  extensions: mbstring, intl, pdo_mysql, redis
+                  coverage: xdebug
+
+            - name: Get Composer cache directory
+              id: composer-cache
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            - name: Cache Composer dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install --no-progress --no-interaction --prefer-dist
+
+            - name: Run PHP-CS-Fixer
+              run: vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes --diff --verbose
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse --memory-limit=1G
+
+            - name: Run PHPUnit with coverage
+              run: vendor/bin/phpunit tests --coverage-clover=coverage.xml --log-junit=phpunit-report.xml
