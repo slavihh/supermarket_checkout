@@ -17,8 +17,8 @@ readonly class CheckoutService implements CheckoutServiceInterface
 {
     public function __construct(
         private ProductServiceInterface $productService,
-        private PriceCalculatorService  $priceCalculator,
-        private EntityManagerInterface  $em,
+        private PriceCalculatorService $priceCalculator,
+        private EntityManagerInterface $em,
     ) {
     }
 
