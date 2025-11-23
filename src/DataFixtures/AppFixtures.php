@@ -23,9 +23,7 @@ class AppFixtures extends Fixture
             ->setSpecialPrice(130)
             ->setProduct($productA);
 
-        if (method_exists($productA, 'addPromotion')) {
-            $productA->addPromotion($promoA);
-        }
+        $productA->addPromotion($promoA);
 
         $manager->persist($productA);
         $manager->persist($promoA);
@@ -40,9 +38,7 @@ class AppFixtures extends Fixture
             ->setSpecialPrice(45)
             ->setProduct($productB);
 
-        if (method_exists($productB, 'addPromotion')) {
-            $productB->addPromotion($promoB);
-        }
+        $productB->addPromotion($promoB);
 
         $manager->persist($productB);
         $manager->persist($promoB);

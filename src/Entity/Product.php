@@ -24,10 +24,12 @@ class Product
     #[ORM\Column(length: 255)]
     private string $name;
 
-    // store in cents
     #[ORM\Column]
     private int $unitPrice;
 
+    /**
+     * @var Collection<int, Promotion>
+     */
     #[ORM\OneToMany(targetEntity: Promotion::class, mappedBy: 'product', cascade: ['persist', 'remove'])]
     private Collection $promotions;
 
@@ -90,17 +92,6 @@ class Product
         if (!$this->promotions->contains($promotion)) {
             $this->promotions->add($promotion);
             $promotion->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removePromotion(Promotion $promotion): self
-    {
-        if ($this->promotions->removeElement($promotion)) {
-            if ($promotion->getProduct() === $this) {
-                $promotion->setProduct(null);
-            }
         }
 
         return $this;

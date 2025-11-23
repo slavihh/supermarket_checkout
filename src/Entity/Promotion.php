@@ -16,17 +16,15 @@ class Promotion
     #[ORM\Column]
     private ?int $id = null;
 
-    // e.g. 3 -> "3 for 130"
     #[ORM\Column]
     private int $quantity;
 
-    // special price for that quantity, in cents e.g. 130
     #[ORM\Column]
     private int $specialPrice;
 
     #[ORM\ManyToOne(inversedBy: 'promotions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Product $product = null;
+    private Product $product;
 
     public function getId(): ?int
     {
@@ -57,12 +55,12 @@ class Promotion
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function getProduct(): Product
     {
         return $this->product;
     }
 
-    public function setProduct(?Product $product): self
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
 

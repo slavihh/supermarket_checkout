@@ -29,6 +29,9 @@ class Sale
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
+    /**
+     * @var Collection<int, SaleItem>
+     */
     #[ORM\OneToMany(targetEntity: SaleItem::class, mappedBy: 'sale', cascade: ['persist'], orphanRemoval: true)]
     private Collection $items;
 

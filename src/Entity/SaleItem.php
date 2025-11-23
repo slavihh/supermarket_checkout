@@ -35,19 +35,14 @@ class SaleItem
         return $this->id;
     }
 
-    public function getSale(): ?Sale
-    {
-        return $this->sale;
-    }
-
-    public function setSale(?Sale $sale): self
+    public function setSale(Sale $sale): self
     {
         $this->sale = $sale;
 
         return $this;
     }
 
-    public function setProduct(?Product $product): self
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
 

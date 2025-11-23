@@ -9,8 +9,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @template-extends AbstractType<array<string, mixed>>
+ */
 class CheckoutType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

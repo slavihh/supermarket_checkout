@@ -14,7 +14,3 @@ parameters:
 
     symfony:
         containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
-
-    ignoreErrors:
-        - '#Typed property .+ must not be accessed before initialization#'
-        - '#Access to an undefined property Symfony\\.+#'

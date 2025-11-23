@@ -7,7 +7,7 @@ namespace App\Service\Checkout;
 use App\Dto\LineItemPriceResult;
 use App\Entity\Sale;
 use App\Entity\SaleItem;
-use App\Service\Calculator\PriceCalculator;
+use App\Service\Calculator\PriceCalculatorService;
 use App\Service\Product\ProductServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -17,7 +17,7 @@ readonly class CheckoutService implements CheckoutServiceInterface
 {
     public function __construct(
         private ProductServiceInterface $productService,
-        private PriceCalculator $priceCalculator,
+        private PriceCalculatorService $priceCalculator,
         private EntityManagerInterface $em,
     ) {
     }

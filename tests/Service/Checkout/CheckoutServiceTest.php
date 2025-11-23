@@ -7,7 +7,8 @@ namespace App\Tests\Service\Checkout;
 use App\Dto\LineItemPriceResult;
 use App\Entity\Product;
 use App\Entity\Sale;
-use App\Service\Calculator\PriceCalculator;
+use App\Service\Calculator\PriceCalculatorService;
+use App\Service\Calculator\PriceCalculatorServiceInterface;
 use App\Service\Checkout\CheckoutService;
 use App\Service\Product\ProductServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,14 +21,14 @@ use RuntimeException;
 final class CheckoutServiceTest extends TestCase
 {
     private ProductServiceInterface|MockObject $productService;
-    private PriceCalculator|MockObject $priceCalculator;
+    private PriceCalculatorServiceInterface|MockObject $priceCalculator;
     private EntityManagerInterface|MockObject $em;
     private CheckoutService $service;
 
     protected function setUp(): void
     {
         $this->productService = $this->createMock(ProductServiceInterface::class);
-        $this->priceCalculator = $this->createMock(PriceCalculator::class);
+        $this->priceCalculator = $this->createMock(PriceCalculatorService::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
 
         $this->service = new CheckoutService(
