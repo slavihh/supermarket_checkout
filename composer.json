@@ -11,7 +11,6 @@
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.5",
-        "symfony/cache": "7.3.*",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
@@ -78,6 +77,10 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
-        "friendsofphp/php-cs-fixer": "^3.90"
+        "friendsofphp/php-cs-fixer": "^3.90",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "12"
     }
 }

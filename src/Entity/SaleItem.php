@@ -18,11 +18,11 @@ class SaleItem
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Sale $sale = null;
+    private Sale $sale;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Product $product = null;
+    private Product $product;
 
     #[ORM\Column]
     private int $quantity;
