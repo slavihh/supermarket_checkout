@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -46,11 +47,6 @@ class SaleItem
         return $this;
     }
 
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
-
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
@@ -58,21 +54,11 @@ class SaleItem
         return $this;
     }
 
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
     public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
 
         return $this;
-    }
-
-    public function getLinePrice(): int
-    {
-        return $this->linePrice;
     }
 
     public function setLinePrice(int $linePrice): self

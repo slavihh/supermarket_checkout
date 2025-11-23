@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supermarket Checkout{% endblock %}
+
+{% block body %}
+    <h1>Supermarket Checkout</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.items) }}<br/>
+    <button class="btn btn-primary">Calculate</button>
+    {{ form_end(form) }}
+
+    {% if error %}
+        <div class="alert alert-danger mt-3">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if result %}
+        {% set sale = result.sale %}
+        <h2 class="mt-4">Receipt #{{ sale.publicId }}</h2>
+        <p>Date: {{ sale.createdAt|date('Y-m-d H:i:s') }}</p>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Promotion</th>
+                <th>Line Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for line in result.lineDetails %}
+                <tr>
+                    <td>{{ line.sku }}</td>
+                    <td>{{ line.name }}</td>
+                    <td>{{ line.quantity }}</td>
+                    <td>{{ (line.unitPrice / 100)|number_format(2) }} €</td>
+                    <td>
+                        {% if line.appliedPromotions is not empty %}
+                            {{ line.appliedPromotions|join(', ') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ (line.linePrice / 100)|number_format(2) }} €</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Total: {{ (result.totalPrice / 100)|number_format(2) }} €</h3>
+    {% endif %}
+{% endblock %}

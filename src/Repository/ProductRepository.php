@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Product;
@@ -41,11 +43,12 @@ final class ProductRepository extends ServiceEntityRepository
 
     /**
      * @param string[] $skus
+     *
      * @return array<string, Product> map sku => Product
      */
-    public function getBySkusIndexedBySku(array $skus): array
+    public function findBySkusIndexedBySku(array $skus): array
     {
-        if ($skus === []) {
+        if ([] === $skus) {
             return [];
         }
 

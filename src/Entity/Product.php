@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
@@ -26,7 +28,7 @@ class Product
     #[ORM\Column]
     private int $unitPrice;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Promotion::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Promotion::class, mappedBy: 'product', cascade: ['persist', 'remove'])]
     private Collection $promotions;
 
     public function __construct()
