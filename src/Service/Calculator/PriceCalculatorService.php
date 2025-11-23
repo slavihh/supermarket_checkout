@@ -9,7 +9,7 @@ use App\Entity\Product;
 use App\Entity\Promotion;
 use InvalidArgumentException;
 
-class PriceCalculator implements PriceCalculatorInterface
+class PriceCalculatorService implements PriceCalculatorServiceInterface
 {
     public function calculate(Product $product, int $quantity): LineItemPriceResult
     {

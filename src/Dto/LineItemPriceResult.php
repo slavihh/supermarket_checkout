@@ -6,7 +6,7 @@ namespace App\Dto;
 
 use App\Entity\Product;
 
-final class LineItemPriceResult
+class LineItemPriceResult
 {
     /**
      * @param string[] $appliedPromotions
