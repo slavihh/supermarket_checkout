@@ -8,32 +8,38 @@ use App\Dto\LineItemPriceResult;
 use App\Entity\Product;
 use App\Entity\Sale;
 use App\Service\Calculator\PriceCalculatorService;
-use App\Service\Calculator\PriceCalculatorServiceInterface;
 use App\Service\Checkout\CheckoutService;
+use App\Service\Parser\ParserServiceInterface;
 use App\Service\Product\ProductServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use RuntimeException;
 
 final class CheckoutServiceTest extends TestCase
 {
     private ProductServiceInterface|MockObject $productService;
-    private PriceCalculatorServiceInterface|MockObject $priceCalculator;
+
+    private PriceCalculatorService|MockObject $priceCalculator;
+
+    private ParserServiceInterface|MockObject $parserService;
+
     private EntityManagerInterface|MockObject $em;
+
     private CheckoutService $service;
 
     protected function setUp(): void
     {
         $this->productService = $this->createMock(ProductServiceInterface::class);
         $this->priceCalculator = $this->createMock(PriceCalculatorService::class);
+        $this->parserService = $this->createMock(ParserServiceInterface::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
 
         $this->service = new CheckoutService(
             $this->productService,
             $this->priceCalculator,
+            $this->parserService,
             $this->em
         );
     }
@@ -41,6 +47,15 @@ final class CheckoutServiceTest extends TestCase
     public function testCheckoutSuccessful(): void
     {
         $itemsString = 'ABBA';
+
+        $this->parserService
+            ->expects($this->once())
+            ->method('parse')
+            ->with($itemsString)
+            ->willReturn([
+                'A' => 2,
+                'B' => 2,
+            ]);
 
         $productA = $this->createMock(Product::class);
         $productA->method('getSku')->willReturn('A');
@@ -127,6 +142,15 @@ final class CheckoutServiceTest extends TestCase
     {
         $itemsString = 'AB';
 
+        $this->parserService
+            ->expects($this->once())
+            ->method('parse')
+            ->with($itemsString)
+            ->willReturn([
+                'A' => 1,
+                'B' => 1,
+            ]);
+
         $productA = $this->createMock(Product::class);
         $productA->method('getSku')->willReturn('A');
 
@@ -152,8 +176,16 @@ final class CheckoutServiceTest extends TestCase
         $this->service->checkout($itemsString);
     }
 
-    public function testCheckoutThrowsOnEmptyItemsString(): void
+    public function testCheckoutBubblesUpEmptyItemsExceptionFromParser(): void
     {
+        $itemsString = '';
+
+        $this->parserService
+            ->expects($this->once())
+            ->method('parse')
+            ->with($itemsString)
+            ->willThrowException(new InvalidArgumentException('Items string must not be empty.'));
+
         $this->productService
             ->expects($this->never())
             ->method('findBySkus');
@@ -161,11 +193,19 @@ final class CheckoutServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Items string must not be empty.');
 
-        $this->service->checkout('');
+        $this->service->checkout($itemsString);
     }
 
-    public function testCheckoutThrowsOnInvalidCharacter(): void
+    public function testCheckoutBubblesUpInvalidCharacterExceptionFromParser(): void
     {
+        $itemsString = 'AB1';
+
+        $this->parserService
+            ->expects($this->once())
+            ->method('parse')
+            ->with($itemsString)
+            ->willThrowException(new InvalidArgumentException('Invalid character "1" in input.'));
+
         $this->productService
             ->expects($this->never())
             ->method('findBySkus');
@@ -173,16 +213,6 @@ final class CheckoutServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid character "1" in input.');
 
-        $this->service->checkout('AB1');
-    }
-
-    public function testParseItemsStringIsCaseInsensitiveAndCountsCorrectly(): void
-    {
-        $reflection = new ReflectionClass(CheckoutService::class);
-        $method = $reflection->getMethod('parseItemsString');
-
-        $result = $method->invoke($this->service, 'aAbB');
-
-        $this->assertSame(['A' => 2, 'B' => 2], $result);
+        $this->service->checkout($itemsString);
     }
 }
