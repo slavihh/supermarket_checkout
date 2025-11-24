@@ -8,9 +8,9 @@ use App\Dto\LineItemPriceResult;
 use App\Entity\Sale;
 use App\Entity\SaleItem;
 use App\Service\Calculator\PriceCalculatorService;
+use App\Service\Parser\ParserServiceInterface;
 use App\Service\Product\ProductServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use InvalidArgumentException;
 use RuntimeException;
 
 readonly class CheckoutService implements CheckoutServiceInterface
@@ -18,6 +18,7 @@ readonly class CheckoutService implements CheckoutServiceInterface
     public function __construct(
         private ProductServiceInterface $productService,
         private PriceCalculatorService $priceCalculator,
+        private ParserServiceInterface $parserService,
         private EntityManagerInterface $em,
     ) {
     }
@@ -38,8 +39,7 @@ readonly class CheckoutService implements CheckoutServiceInterface
      */
     public function checkout(string $itemsString): array
     {
-        $skuCounts = $this->parseItemsString($itemsString);
-        // load products from cache or db
+        $skuCounts = $this->parserService->parse($itemsString);
         $productsBySku = $this->productService->findBySkus(array_keys($skuCounts));
         foreach ($skuCounts as $sku => $_) {
             if (!isset($productsBySku[$sku])) {
@@ -89,29 +89,5 @@ readonly class CheckoutService implements CheckoutServiceInterface
             'lineDetails' => $lineDetails,
             'totalPrice' => $total,
         ];
-    }
-
-    /**
-     * @return array<string, int>
-     */
-    private function parseItemsString(string $itemsString): array
-    {
-        $itemsString = strtoupper(trim($itemsString));
-
-        if ('' === $itemsString) {
-            throw new InvalidArgumentException('Items string must not be empty.');
-        }
-
-        $counts = [];
-
-        foreach (str_split($itemsString) as $char) {
-            if (!ctype_alpha($char)) {
-                throw new InvalidArgumentException(\sprintf('Invalid character "%s" in input.', $char));
-            }
-
-            $counts[$char] = ($counts[$char] ?? 0) + 1;
-        }
-
-        return $counts;
     }
 }

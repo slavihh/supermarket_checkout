@@ -40,17 +40,7 @@ class Sale
         $this->items = new ArrayCollection();
         $this->createdAt = new DateTimeImmutable();
         $this->totalPrice = 0;
-
-        // generate public UUID
         $this->publicId = Uuid::v4();
-    }
-
-    /**
-     * INTERNAL numeric ID.
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getPublicId(): string
@@ -86,5 +76,10 @@ class Sale
     public function getTotalPrice(): int
     {
         return $this->totalPrice;
+    }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }
